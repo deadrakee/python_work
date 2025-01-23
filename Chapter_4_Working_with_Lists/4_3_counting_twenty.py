@@ -9,6 +9,10 @@
 #     twentys.append(num)
 # print(twentys)
 
-# Option 3
-twenties = [num+1 for num in range(1,21)]
-print(twenties)
+# # Option 3
+# twenties = [num for num in range(1,21)]
+# print(twenties)
+
+# Option 4
+twenties_list = list(range(1,21))
+print(twenties_list)
