@@ -1,6 +1,7 @@
 ### 4-10. Slices:
 
-foods = ["kinoa", "nahut", "fokacha", "oves", "zapekanka", "riba", "pizza", "spanak", "oriz"]
+foods = ["kinoa", "nahut", "fokacha", "oves", "zapekanka", "riba", "pizza",
+         "spanak", "oriz"]
 
 print(f"\nThe first three items in the list are: {foods[:3]}")
 
