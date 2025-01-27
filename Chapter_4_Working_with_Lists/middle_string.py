@@ -1,7 +1,7 @@
 # extract middle of a list
 import math
 
-size = 7
+size = 8
 list = list(range(1,size+1))
 print(list)
 
