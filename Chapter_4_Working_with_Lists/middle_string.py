@@ -9,8 +9,8 @@ chunk = math.ceil(len(list)/3 )
 print(f"\nchunk = {chunk}")
 
 if len(list)%3:
-    # since chunk is not a whole number, the starting point is somewhere between tho values
-    # decision is to start from the left index
+    # since chunk is not a whole number, the starting point is 
+    # somewhere between tho values. Decision is to start from the left index
     start_idx = chunk
     print(f"\nstart_idx drob = {start_idx}")
 else:
