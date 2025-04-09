@@ -1,5 +1,5 @@
 toppings_available = ['pepe', 'cheese', 'ham,' 'mushroom', 'tomato', 'yellow_cheese']
-toppings_requested = ['tomato', 'yellow_cheese', 'pepe']
+toppings_requested = ['tomato', 'yellow_cheese', 'peperoni']
 pizza_possible = True
 
 for current_topping in toppings_requested:
