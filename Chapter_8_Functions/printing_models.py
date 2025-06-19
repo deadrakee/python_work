@@ -1,4 +1,6 @@
-def start_3d_print(requested_models, completed_models):
+def start_3d_print(
+        requested_models,
+        completed_models):
     """Simulate printing of requested lis of objects"""
     while requested_models:
         current_model = requested_models.pop()

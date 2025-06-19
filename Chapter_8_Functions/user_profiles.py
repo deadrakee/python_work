@@ -6,7 +6,7 @@ def build_profile(first, last, **user_param):
     return user_param
 
 
-user = build_profile("Boyan", last ="Sabchev",
+user = build_profile("Boyan", last="Sabchev",
                      location='sofia', 
                      age=28)
 print(user) 

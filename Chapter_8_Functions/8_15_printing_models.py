@@ -2,7 +2,7 @@
 
 import printing_functions
 
-requested_models = ["chuck_jug", "proteza", "bow_tie"]
+requested_models = ["chuck_jug", "proteza", "bow_tie", "wheel", "logo"]
 completed_models = []
 
 printing_functions.start_3d_print(requested_models, completed_models)
