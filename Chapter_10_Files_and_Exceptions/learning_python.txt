@@ -1,0 +1,4 @@
+In Python you can make slices
+In Python you can read files easily
+In Python you can use ranges
+In Python you can manipulate strings
