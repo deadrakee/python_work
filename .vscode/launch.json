@@ -7,7 +7,7 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "cwd": "${fileDirname}"  // 👈 This is the important part
+      "cwd": "${fileDirname}"  // launch python from the script folder
     }
   ]
 }
