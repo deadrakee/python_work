@@ -12,7 +12,13 @@ class Settings:
         self.fullscreen = False
 
         # Ship settings
-        self.ship_speed = 2.5
+        self.ship_speed = 1.5
+
+        # Bullet settings
+        self.bullet_speed = 2
+        self.bullet_width = 3
+        self.bullet_height = 15
+        self.bullet_color = (60, 60, 60)
 
     def change_bg_color_randomly(self):
         """Changes the background with a random color"""
