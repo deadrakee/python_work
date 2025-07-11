@@ -23,8 +23,8 @@ class Ship:
         self.x = float(self.rect.x)
 
         # Movement by key pressing
-        self.r_direction = MoveRight(self.rect)
-        self.l_direction = MoveLeft(self.rect)
+        self.r_direction = MoveRight(self.rect, self.screen_rect)
+        self.l_direction = MoveLeft(self.rect, self.screen_rect)
 
     def blitme(self):
         """Draw ship at its current location"""

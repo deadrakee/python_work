@@ -9,9 +9,10 @@ class Settings:
         self.scree_width = 1200
         self.scree_height = 800
         self.bg_color = (230, 230, 230)
+        self.fullscreen = False
 
         # Ship settings
-        self.ship_speed = 1.5
+        self.ship_speed = 2.5
 
     def change_bg_color_randomly(self):
         """Changes the background with a random color"""

@@ -15,8 +15,7 @@ class AlienInvasion:
         pygame.init()
         self.clock = pygame.time.Clock()
         self.settings = Settings()
-        self.screen = pygame.display.set_mode(
-            (self.settings.scree_width, self.settings.scree_height))
+        self._screen_mode()
         pygame.display.set_caption("Alien Invasion")
 
         self.ship = Ship(ai_game=self)
@@ -37,18 +36,25 @@ class AlienInvasion:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    sys.exit()
-                elif event.key == pygame.K_RIGHT:
-                    self.ship.r_direction.start_moving()
-                elif event.key == pygame.K_LEFT:
-                    self.ship.l_direction.start_moving()
-
+                self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_RIGHT:
-                    self.ship.r_direction.stop_moving()
-                elif event.key == pygame.K_LEFT:
-                    self.ship.l_direction.stop_moving()
+                self._check_keyup_events(event)
+
+    def _check_keydown_events(self, event):
+        """Process the keydowns"""
+        if event.key == pygame.K_RIGHT:
+            self.ship.r_direction.start_moving()
+        elif event.key == pygame.K_LEFT:
+            self.ship.l_direction.start_moving()
+        elif event.key == pygame.K_ESCAPE:
+            sys.exit()
+
+    def _check_keyup_events(self, event):
+        """Process key releases"""
+        if event.key == pygame.K_RIGHT:
+            self.ship.r_direction.stop_moving()
+        elif event.key == pygame.K_LEFT:
+            self.ship.l_direction.stop_moving()
 
     def _update_screen(self):
         """Update images on the screen and flip to the new screen"""
@@ -58,6 +64,18 @@ class AlienInvasion:
 
         # Make the most recently drawn screen visible.
         pygame.display.flip()
+
+    def _screen_mode(self):
+        """Run in window or fullscreen mode depending on Settings"""
+        if self.settings.fullscreen:
+            self.screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+            self.settings.screen_width = self.screen.get_rect().width
+            self.settings.screen_height = self.screen.get_rect().height
+        else:
+            self.screen = pygame.display.set_mode(
+                (self.settings.scree_width, self.settings.scree_height))
+            
+
 
 if __name__ == '__main__':
     ai = AlienInvasion()
