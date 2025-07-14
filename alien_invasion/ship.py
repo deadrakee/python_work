@@ -30,7 +30,7 @@ class Ship:
         """Draw ship at its current location"""
         self.screen.blit(self.image, self.rect)
 
-    def move(self):
+    def update(self):
         """Move in all active directions"""
         self.x = self.r_direction.move(self.settings.ship_speed, self.x)
         self.x = self.l_direction.move(self.settings.ship_speed, self.x)
