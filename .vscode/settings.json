@@ -1,0 +1,6 @@
+{
+  "python.defaultInterpreterPath": "C:/toolbase/python/3.9.5.0.2/python-3.9.5.amd64/python.exe",
+  "python.condaPath": "",
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.pythonProjects": []
+}

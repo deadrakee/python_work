@@ -21,6 +21,12 @@ class Settings:
         self.bullet_color = (255, 0, 0)
         self.bullets_allowed = 3
 
+        # Alien settings
+        self.alien_speed = 1.0 
+        self.fleet_drop_speed = 0.5
+        # Move right: 1; Move left: -1
+        self.fleet_direction = 1
+
     def change_bg_color_randomly(self):
         """Changes the background with a random color"""
         r = random.randint(0,255)
