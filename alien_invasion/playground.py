@@ -2,6 +2,7 @@ import pygame
 import pygame.draw
 import pygame.image
 import pygame.sprite
+import pygame.display
 
 class Alien(pygame.sprite.Sprite):
     """Contains characteristics of a single alien"""
@@ -47,6 +48,10 @@ print(alien_1.image)
 print(alien_1.rect)
 screen.blit(alien_1.image, alien_1.rect)
 
+print("--------")
+print(screen_rect.centerx)
+print(screen_rect.right)
+print(screen_rect.width)
 while True:
     pygame.display.flip()
     
