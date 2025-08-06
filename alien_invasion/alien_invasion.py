@@ -5,7 +5,10 @@ import pygame.event
 import pygame.sprite
 import pygame.time
 
+from time import sleep
+
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -20,6 +23,7 @@ class AlienInvasion:
         self.settings = Settings()
         self._screen_mode()
         pygame.display.set_caption("Alien Invasion")
+        self.stats = GameStats(self)
 
         self.ship = Ship(ai_game=self)
         self.bullets = pygame.sprite.Group()
@@ -93,6 +97,26 @@ class AlienInvasion:
         """Checks if the fleet is ath the end of the screen and update position"""
         self._check_fleet_edges()
         self.aliens.update()
+
+        # Look for alien-ship collisions
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+    def _ship_hit(self):
+        """Respond when alien collides with the ship"""
+        self.stats.ships_remaining -= 1
+        self.ship.center_ship()
+
+        # Clear the screen
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Create new fleet and pause game for half a second
+        self._create_fleet()
+        sleep(0.5)
+
+        # Keypresses are stored during the pause. Clear all to avoid inital bullets 
+        pygame.event.clear()
 
     def _create_fleet(self):
         """Create the fleet of aliens"""

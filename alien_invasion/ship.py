@@ -34,3 +34,8 @@ class Ship:
         """Move in all active directions"""
         self.x = self.r_direction.move(self.settings.ship_speed, self.x)
         self.x = self.l_direction.move(self.settings.ship_speed, self.x)
+
+    def center_ship(self):
+        """Place the ship in the original position"""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
