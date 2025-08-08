@@ -95,7 +95,7 @@ class StatusBar():
 
         # jokers shot
         self._place_joker_indicator()
-        self.font = pygame.font.SysFont(None, 50)
+        self._place_joker_indicator_counter()
 
 
     def _create_life_indicators(self):
@@ -128,6 +128,17 @@ class StatusBar():
         self.joker_ind_rect.y = (self.rect.height - self.joker_ind_rect.height) / 2
 
 
+    def _place_joker_indicator_counter(self):
+        """Place number of shot jokers next to the static indicator"""
+        self.font = pygame.font.SysFont(None, 50)
+        self.ji_count = self.font.render(f" - {self.game_stats.jokers_shot}", True, self.settings.status_bar_ji_color)
+        self.ji_count_rect = self.ji_count.get_rect()
+
+        # Offset the shots count right next to the indicator
+        self.ji_count_rect.x = self.joker_ind_rect.x + self.joker_ind_rect.width
+        self.ji_count_rect.y = self.joker_ind_rect.y
+
+
     def draw(self):
         """Draw everything on status bar then blit it on screen """
         # Fill the status bar with solid color
@@ -139,10 +150,9 @@ class StatusBar():
         # Draw joker indicator
         self.surface.blit(self.joker_ind_image, self.joker_ind_rect)
 
-        # Place and draw jokers shot count next to the indicator
+        # Render new number and draw jokers shot count next to the indicator
         self.ji_count = self.font.render(f" - {self.game_stats.jokers_shot}", True, self.settings.status_bar_ji_color)
-        self.surface.blit(
-            self.ji_count, (self.joker_ind_rect.x + self.joker_ind_rect.width, self.joker_ind_rect.y))
+        self.surface.blit(self.ji_count, self.ji_count_rect)
         
         # Draw the composed status bar on the screeen
         self.screen.blit(self.surface, self.rect)     
