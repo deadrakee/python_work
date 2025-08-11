@@ -10,3 +10,4 @@ class GameStats:
     def reset_stats(self):
         """Parameters which can be returned to initial values at runtime"""
         self.ships_remaining = self.settings.ship_limit
+        self.score = 0

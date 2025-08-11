@@ -10,6 +10,7 @@ from time import sleep
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -25,7 +26,10 @@ class AlienInvasion:
         self.settings = Settings()
         self._screen_mode()
         pygame.display.set_caption("Alien Invasion")
+        
+        # Create game stats and scoreboard
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(ai_game=self)
         self.bullets = pygame.sprite.Group()
@@ -37,6 +41,7 @@ class AlienInvasion:
         self.button_play = Button(self, "PLAY")
         self.button_easy = Button(self, "EASY")
         self.button_hard = Button(self, "HARD")
+
 
     def run_game(self):
         """Start the main loop"""
@@ -63,30 +68,22 @@ class AlienInvasion:
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self._check_play_button(mouse_pos)
-                self._check_easy_button(mouse_pos)
-                self._check_hard_button(mouse_pos)
+                self._check_mouse_click(mouse_pos)
 
 
-    def _check_play_button(self, mouse_pos):
-        """Check if mouse click is on play button"""
-        mouse_clicked = self.button_play.rect.collidepoint(mouse_pos)
-        if mouse_clicked and not self.game_active:
+    def _check_mouse_click(self, mouse_pos):
+        """Check if mouse click is on any button"""
+        play_clicked = self.button_play.rect.collidepoint(mouse_pos)
+        easy_clicked = self.button_easy.rect.collidepoint(mouse_pos)
+        hard_clicked = self.button_hard.rect.collidepoint(mouse_pos)
+
+        # Start game with specific settings depending on the button clicked
+        if play_clicked and not self.game_active:
             self._start_game()
-
-
-    def _check_easy_button(self, mouse_pos):
-        """Check if mouse click is on easy button"""
-        mouse_clicked = self.button_easy.rect.collidepoint(mouse_pos)
-        if mouse_clicked and not self.game_active:
+        elif easy_clicked and not self.game_active:
             self._start_game()
             self.settings.init_easy_settings()
-
-
-    def _check_hard_button(self, mouse_pos):
-        """Check if mouse click is on hard button"""
-        mouse_clicked = self.button_hard.rect.collidepoint(mouse_pos)
-        if mouse_clicked and not self.game_active:
+        elif hard_clicked and not self.game_active:
             self._start_game()
             self.settings.init_hard_settings()
 
@@ -253,6 +250,9 @@ class AlienInvasion:
 
         # Draw fleet
         self.aliens.draw(self.screen)
+
+        # Draw the score in the corner
+        self.sb.draw_score()
 
         # Draw all buttons
         if not self.game_active:
