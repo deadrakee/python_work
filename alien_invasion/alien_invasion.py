@@ -33,8 +33,10 @@ class AlienInvasion:
         self._create_fleet()
         self.game_active = False
 
-        # Make Play button
+        # Make buttons
         self.button_play = Button(self, "PLAY")
+        self.button_easy = Button(self, "EASY")
+        self.button_hard = Button(self, "HARD")
 
     def run_game(self):
         """Start the main loop"""
@@ -62,6 +64,8 @@ class AlienInvasion:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
+                self._check_easy_button(mouse_pos)
+                self._check_hard_button(mouse_pos)
 
 
     def _check_play_button(self, mouse_pos):
@@ -71,11 +75,28 @@ class AlienInvasion:
             self._start_game()
 
 
+    def _check_easy_button(self, mouse_pos):
+        """Check if mouse click is on easy button"""
+        mouse_clicked = self.button_easy.rect.collidepoint(mouse_pos)
+        if mouse_clicked and not self.game_active:
+            self._start_game()
+            self.settings.init_easy_settings()
+
+
+    def _check_hard_button(self, mouse_pos):
+        """Check if mouse click is on hard button"""
+        mouse_clicked = self.button_hard.rect.collidepoint(mouse_pos)
+        if mouse_clicked and not self.game_active:
+            self._start_game()
+            self.settings.init_hard_settings()
+
+
     def _start_game(self):
         """Set conditions for a new game"""
-        # Restore game stats
+        # Restore game stats and settings
         self.game_active = True
         self.stats.reset_stats()
+        self.settings.init_dynamic_settings()
 
         # Clear the screen
         self.aliens.empty()
@@ -101,6 +122,9 @@ class AlienInvasion:
             self._fire_bullet()
         elif event.key == pygame.K_p and not self.game_active:
             self._start_game()
+        elif event.key == pygame.K_1:
+            self.settings.alien_speed = 1000
+
 
     def _check_keyup_events(self, event):
         """Process key releases"""
@@ -127,10 +151,11 @@ class AlienInvasion:
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, not self.settings.bullet_invincible, True)
 
-        # When all aliens are killed, remove the remaining bullets and create new fleet
+        # When all aliens are killed, remove the remaining bullets and create a faster new fleet
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
+            self.settings._speedup_game()
 
     def _update_aliens(self):
         """Checks fleet collisions and escapes and update position"""
@@ -144,7 +169,7 @@ class AlienInvasion:
 
     def _ship_hit(self):
         """Respond when alien collides with the ship"""
-        if self.stats.ships_remaining > 0:
+        if self.stats.ships_remaining > 1:
             self.stats.ships_remaining -= 1
             self.ship.center_ship()
 
@@ -229,9 +254,11 @@ class AlienInvasion:
         # Draw fleet
         self.aliens.draw(self.screen)
 
-        # Draw play button
+        # Draw all buttons
         if not self.game_active:
             self.button_play.draw()
+            self.button_easy.draw()
+            self.button_hard.draw()
 
         # Make the most recently drawn screen visible.
         pygame.display.flip()

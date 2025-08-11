@@ -1,4 +1,4 @@
-### 14-2. Target Practice:
+### 14-3. Challenging Target Practice:
 
 import sys
 import pygame
@@ -20,26 +20,40 @@ class Settings:
         self.screen_height = 1080
 
         # game
-        self.miss_threshold = 3
+        self.miss_threshold = 30
+        self.hit_threshold = 3
+        self.speedup_scale = 1.1
 
         # xwing
-        self.xwing_speed = 5
+        self.xwing_speed = 6
 
         # bullet
         self.bullet_color = (255,0,0)
         self.bullet_width = 20
         self.bullet_height = 5
-        self.bullet_speed = 4
+        self.bullet_speed = 5
 
         # target
         self.target_color = (130,130,130)
         self.target_width = 20
         self.target_height = 250
-        self.target_speed = 1
 
         # text
         self.text_color = (255,255,255)
-        
+
+        # dynamic settings
+        self.init_dynamic_settings()
+
+    
+    def init_dynamic_settings(self):
+        """Set default values for some parameters"""
+        self.target_speed = 0.5
+
+
+    def increase_speed(self):
+        """Make target faster"""
+        self.target_speed *= self.speedup_scale
+
 
 
 class GameStats:
@@ -53,6 +67,7 @@ class GameStats:
     def reset_stats(self):
         """Options which can be resetted at runtime"""
         self.target_miss = 0
+        self.hit_count = 0
 
 
 
@@ -221,7 +236,7 @@ class TargetPractice:
 
         # misses counter
         self.font = pygame.font.SysFont(None, 50)
-        self.misses = self.font.render(f"{self.game_stats.target_miss}", True, self.settings.text_color)
+        self.misses = self.font.render(f"{self.game_stats.target_miss} {self.game_stats.hit_count}", True, self.settings.text_color)
         self.misses_rect = self.misses.get_rect()
         self.misses_rect.bottomleft = self.screen_rect.bottomleft
 
@@ -241,7 +256,7 @@ class TargetPractice:
                 self.xwing.update()
                 self.target.update()
             self._update_screen()
-            print(self.game_paused)
+            print(self.settings.target_speed)
 
 
     def _check_events(self):
@@ -299,7 +314,7 @@ class TargetPractice:
         if self.game_paused:
             self.button_pause.draw()
 
-        self.misses = self.font.render(f"{self.game_stats.target_miss}", True, self.settings.text_color)
+        self.misses = self.font.render(f"{self.game_stats.target_miss} {self.game_stats.hit_count}", True, self.settings.text_color)
         self.screen.blit(self.misses, self.misses_rect)
 
         # self.screen
@@ -332,19 +347,22 @@ class TargetPractice:
 
 
     def _check_bullet_target_collision(self):
-        """Detects hits"""
+        """Detects hits and levelup"""
         while pygame.sprite.spritecollideany(self.target, self.bullets):
             self.bullets.remove(pygame.sprite.spritecollideany(self.target, self.bullets))
+            self.game_stats.hit_count += 1
+            self.settings.increase_speed()
 
 
     def _start_game(self):
         """Set all parameters to initial and change game flag"""
+        self.settings.init_dynamic_settings()
         self.game_active = True
-        self.game_stats.target_miss = 0
+        self.game_paused = False
+        self.game_stats.reset_stats()
         self.xwing.center()
         self.target.center()
         self.bullets.empty()
-        self.game_paused = False
 
 
     def _check_play_button(self):
