@@ -27,6 +27,9 @@ class Settings:
         # How quickly the game speeds up
         self.speedup_scale = 1.1
 
+        # Kill points ramping scale
+        self.score_scale = 1.5
+
         self.init_dynamic_settings()
 
 
@@ -36,6 +39,7 @@ class Settings:
         self.ship_speed = 1.5
         self.bullet_speed = 2.5
         self.bullet_width = 3
+        self.alien_points = 50
 
         # Move right: 1; Move left: -1
         self.fleet_direction = 1
@@ -46,6 +50,9 @@ class Settings:
         self.alien_speed *= self.speedup_scale
         self.ship_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
+
+        # Make aliens more rewarding each new level
+        self.alien_points = int(self.alien_points * self.score_scale)
 
 
     def init_easy_settings(self):

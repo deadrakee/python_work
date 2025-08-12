@@ -1,13 +1,15 @@
 import pygame
 import pygame.image
 
+from pygame.sprite import Sprite
 from direction import MoveRight, MoveLeft
 
-class Ship:
+class Ship(Sprite):
     """Create and manipulate a ship, representing a player"""
 
     def __init__(self, ai_game):
         """Init the ship and set its starting position"""
+        super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()

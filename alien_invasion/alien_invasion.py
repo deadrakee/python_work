@@ -1,4 +1,5 @@
 import sys
+import pathlib
 import pygame
 import pygame.display
 import pygame.event
@@ -61,7 +62,7 @@ class AlienInvasion:
         """Respond to keypresses and mouse events"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                self._quit_game()
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
@@ -93,6 +94,9 @@ class AlienInvasion:
         # Restore game stats and settings
         self.game_active = True
         self.stats.reset_stats()
+        self.sb.prepare_score()
+        self.sb.prep_level()
+        self.sb.prep_lives()
         self.settings.init_dynamic_settings()
 
         # Clear the screen
@@ -114,7 +118,7 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.l_direction.start_moving()
         elif event.key == pygame.K_ESCAPE:
-            sys.exit()
+            self._quit_game()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
         elif event.key == pygame.K_p and not self.game_active:
@@ -142,17 +146,31 @@ class AlienInvasion:
 
         self._check_bullet_alien_collision()
 
+
     def _check_bullet_alien_collision(self):
         """Respond to collisions between bullets and aliens."""
         # Delete both of them when they overlap
         collisions = pygame.sprite.groupcollide(
             self.bullets, self.aliens, not self.settings.bullet_invincible, True)
+        
+        # Increase score for killed aliens and update the score image
+        if collisions:
+            for alien_list in collisions.values():
+                self.stats.score += self.settings.alien_points * len(alien_list)
+            self.sb.prepare_score()
+            self.sb.check_new_highscore()
 
         # When all aliens are killed, remove the remaining bullets and create a faster new fleet
         if not self.aliens:
+            # Destroy existing bullets and create new fleet
             self.bullets.empty()
             self._create_fleet()
             self.settings._speedup_game()
+
+            # Level up
+            self.stats.level += 1
+            self.sb.prep_level()
+
 
     def _update_aliens(self):
         """Checks fleet collisions and escapes and update position"""
@@ -164,10 +182,11 @@ class AlienInvasion:
             self._ship_hit()
         self._check_aliens_bottom()
 
+
     def _ship_hit(self):
         """Respond when alien collides with the ship"""
         if self.stats.ships_remaining > 1:
-            self.stats.ships_remaining -= 1
+            # Move ship to default position
             self.ship.center_ship()
 
             # Clear the screen
@@ -188,6 +207,10 @@ class AlienInvasion:
             # No more lives. Game is stopped
             self.game_active = False
             pygame.mouse.set_visible(True)
+
+        # Remove life and update indicator on status bar
+        self.stats.ships_remaining -= 1
+        self.sb.prep_lives()
 
     def _check_aliens_bottom(self):
         """Detects when aliens reach out of the screen"""
@@ -278,6 +301,12 @@ class AlienInvasion:
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(ai_game=self)
             self.bullets.add(new_bullet)
+
+    def _quit_game(self):
+        """Store highscore and exit program"""
+        hs_path = pathlib.Path("highscore.txt")
+        hs_path.write_text(str(self.stats.high_score))
+        sys.exit()
 
 
 
