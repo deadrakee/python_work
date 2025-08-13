@@ -1,0 +1,4 @@
+### 14-7. Expanding the Game:
+
+# Part of alien invasion. Added features
+# 1. Aliens can fire at you

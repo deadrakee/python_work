@@ -21,6 +21,12 @@ class Settings:
         self.bullets_allowed = 3
         self.bullet_invincible = False
 
+        # Enemy bullets
+        self.enemy_bullet_color = (0, 135, 0)
+        self.enemy_bullet_speed = 2
+        self.enemy_bullet_width = 3
+        self.eb_spawn_cd = 100
+
         # Alien settings
         self.fleet_drop_speed = 10
 
@@ -36,8 +42,8 @@ class Settings:
     def init_dynamic_settings(self):
         """Settings which will reset at runtime"""
         self.alien_speed = 1.0 
-        self.ship_speed = 1.5
-        self.bullet_speed = 2.5
+        self.ship_speed = 3
+        self.bullet_speed = 4
         self.bullet_width = 3
         self.alien_points = 50
 

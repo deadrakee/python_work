@@ -23,6 +23,10 @@ class Alien(pygame.sprite.Sprite):
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
 
+        # Store its row and column postion
+        self.row = 0
+        self.col = 0
+
     def check_edges(self):
         """Return True if an alien is at the edge of the screen"""
         screen_rect = self.screen.get_rect()

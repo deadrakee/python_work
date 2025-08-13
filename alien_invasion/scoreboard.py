@@ -20,6 +20,11 @@ class Scoreboard:
         self.text_color = (30,30,30)
         self.font = pygame.font.SysFont(None, 48)
 
+        self._prep_images()
+
+    
+    def _prep_images(self):
+        """Render all scores"""
         # Prepare the initial score and high score and level
         self.prepare_score()
         self.prep_high_score()
@@ -82,6 +87,13 @@ class Scoreboard:
             new_ship.rect.y = 10
             self.ships.add(new_ship)
 
+    
+    def check_new_highscore(self):
+        """Updates highscore when curren is bigger"""
+        if self.stats.score > self.stats.high_score:
+            self.stats.high_score = self.stats.score
+            self.prep_high_score()
+
 
     def draw_score(self):
         """Draw tall statuses on screen"""
@@ -89,10 +101,4 @@ class Scoreboard:
         self.screen.blit(self.high_score_image, self.high_score_image_rect)
         self.screen.blit(self.level_image, self.level_rect)
         self.ships.draw(self.screen)
-
-    
-    def check_new_highscore(self):
-        """Updates highscore when curren is bigger"""
-        if self.stats.score > self.stats.high_score:
-            self.stats.high_score = self.stats.score
-            self.prep_high_score()
+        
