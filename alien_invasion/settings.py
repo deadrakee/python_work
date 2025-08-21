@@ -1,5 +1,8 @@
 """Module containing settings"""
 import random
+
+TRANSPARENT = (0, 0, 0, 0)
+
 class Settings:
     """A class to store all settings for Alien Invasion"""
 
@@ -29,6 +32,15 @@ class Settings:
 
         # Alien settings
         self.fleet_drop_speed = 10
+
+        # Shield size
+        self.shield_shape = "image"
+        self.shield_count = 3
+        self.shield_width = 100
+        self.shield_height = 30
+        self.shield_bottom = self.screen_height-200
+        self.shield_color = (0, 100, 0, 255)
+        self.dent_radius_multi = 2.8
 
         # How quickly the game speeds up
         self.speedup_scale = 1.1

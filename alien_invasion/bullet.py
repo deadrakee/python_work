@@ -1,6 +1,7 @@
 import pygame
 import pygame.display
 import pygame.draw
+import pygame.mask
 from pygame.sprite import Sprite
 
 class Bullet(Sprite):
@@ -33,10 +34,20 @@ class ShipBullet(Bullet):
         # Move up the screen
         self.direction = -1
 
-        # create a bullet rect at (0, 0) and then move to ship position
-        self.rect = pygame.Rect(0, 0, self.settings.bullet_width,
-                                self.settings.bullet_height)
+        # Create bullet surface
+        self.image = pygame.Surface(
+            (self.settings.bullet_width, self.settings.bullet_height), 
+            pygame.SRCALPHA)
+        
+        # Fill it with color
+        self.image.fill(self.color)
+
+        # Create a bullet rect at and then move to ship position
+        self.rect = self.image.get_rect()
         self.rect.midtop = shooter_rect.midtop
+
+        # Create mask for shield collisions
+        self.mask = pygame.mask.from_surface(self.image)
 
         # Store the bullet's position as a float
         self.y = float(self.rect.y)
@@ -53,12 +64,20 @@ class AlienBullet(Bullet):
         # Move down the screen
         self.direction = 1
 
-        # Create a bullet rect at (0, 0) with specific size
-        self.rect = pygame.Rect(0, 0, self.settings.enemy_bullet_width,
-                                self.settings.bullet_height)
+        # Create bullet surface
+        self.image = pygame.Surface(
+            (self.settings.enemy_bullet_width, self.settings.bullet_height), 
+            pygame.SRCALPHA)
         
-        # Move to alien position
+        # Fill it with color
+        self.image.fill(self.color)
+
+        # Create a bullet rect at and then move to alien position
+        self.rect = self.image.get_rect()
         self.rect.midbottom = shooter_rect.midbottom
+
+        # Create mask for shield collisions
+        self.mask = pygame.mask.from_surface(self.image)
 
         # Store the bullet's position as a float
         self.y = float(self.rect.y)

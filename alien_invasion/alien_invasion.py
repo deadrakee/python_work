@@ -2,7 +2,9 @@ import sys
 import pathlib
 import pygame
 import pygame.display
+import pygame.draw
 import pygame.event
+import pygame.mask
 import pygame.sprite
 import pygame.time
 import pygame.mouse
@@ -10,13 +12,14 @@ import pygame.mouse
 from time import sleep
 from random import randint
 
-from settings import Settings
+from settings import *
 from game_stats import GameStats
 from scoreboard import Scoreboard
 from ship import Ship
 from bullet import ShipBullet, AlienBullet
 from alien import Alien
 from button import Button
+from shield import Shield
 
 class AlienInvasion:
     """Class containing all game assets"""
@@ -44,6 +47,10 @@ class AlienInvasion:
 
         self._create_fleet()
         self.game_active = False
+
+        # Create shields group
+        self.shields = pygame.sprite.Group()
+        self._create_shields()
 
         # Make buttons
         self.button_play = Button(self, "PLAY")
@@ -114,9 +121,11 @@ class AlienInvasion:
         elif event.key == pygame.K_1:
             self.settings.alien_speed = 1000
         elif event.key == pygame.K_2:
-            for alien in self.armed_aliens:
-                print(f"{alien.row}-{alien.col}", end="  ")
-            print()
+            for sh in self.shields:
+                print(sh.rect.center)
+            print(self.shields)
+        elif event.key == pygame.K_3:
+            self.aliens.empty()
 
 
     def _check_keyup_events(self, event):
@@ -140,8 +149,10 @@ class AlienInvasion:
         self.armed_aliens.empty()
         self.bullets.empty()
         self.enemy_bullets.empty()
+        self.shields.empty()
 
-        # Create new fleet and center ship
+        # Create new fleet, shields and center ship
+        self._create_shields()
         self._create_fleet()
         self.ship.center_ship()
 
@@ -192,6 +203,9 @@ class AlienInvasion:
             if enemy_bullet.rect.top >= self.screen.get_rect().bottom:
                 self.enemy_bullets.remove(enemy_bullet)
 
+        # Detect if enemy bullets hit a shield
+        self._check_bullet_shield_collision(self.enemy_bullets, self.settings.enemy_bullet_width)
+
         # Look for enemy bullet-ship collisions
         if pygame.sprite.spritecollideany(self.ship, self.enemy_bullets):
             self._ship_hit()
@@ -207,7 +221,45 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        # Respond to ship bullet hitting a shield
+        self._check_bullet_shield_collision(self.bullets, self.settings.bullet_width)
+        # Respond to ship bullet hitting an alien
         self._check_bullet_alien_collision()
+
+
+    def _check_bullet_shield_collision(self, bullet_group, bullet_width):
+        """When any bullethits a shield, destroy part of it"""
+        # Don't delete bullet on collision
+        collisions = pygame.sprite.groupcollide(
+            bullet_group, self.shields, False, False)
+
+        # Do a slow pixel by pixel comparison
+        if collisions:
+            # Iterate through all bullets in a collision
+            for bullet, shield_list in collisions.items():
+                # A wider bullet can hit multiple shields, therefore a shield list
+                for shield in shield_list:
+                    # Calculate offset between bullet and shield left corner
+                    offset = (bullet.rect.left - shield.rect.left,
+                               bullet.rect.top - shield.rect.top)
+                    
+                    # Detect pixel perfect collision between bullet and shield
+                    hit_location = shield.mask.overlap(bullet.mask, offset)
+
+                    if hit_location: 
+                        # Draw a transparent circular dent on shield
+                        # Center of the dent is the hit coordinates
+                        pygame.draw.circle(shield.image, 
+                                           TRANSPARENT, 
+                                           hit_location, 
+                                           bullet_width*self.settings.dent_radius_multi)
+
+                        # Update mask with the new dents
+                        shield.mask = pygame.mask.from_surface(shield.image)
+                        # Update mask image only for visualisation of mask
+                        shield.mask_image = shield.mask.to_surface()      
+                        # Bullet actually hit the shield, remove it from group                  
+                        bullet.kill()
 
 
     def _check_bullet_alien_collision(self):
@@ -234,12 +286,19 @@ class AlienInvasion:
 
     def _start_new_level(self):
         """Generate a faster new fleet and update level"""
-        # Destroy existing bullets and create new fleet
+        # Destroy existing bullets
         self.bullets.empty()
         self.enemy_bullets.empty()
-        self.armed_aliens.empty()
 
+        # Create new fleet with shooting last row
+        self.armed_aliens.empty()
         self._create_fleet()
+
+        # Repair shields
+        self.shields.empty()
+        self._create_shields()
+
+        # Make new level harder
         self.settings._speedup_game()
 
         # Level up
@@ -381,6 +440,21 @@ class AlienInvasion:
         self.settings.fleet_direction *= -1
 
 
+    def _create_shields(self):
+        """Create unbroken shields centered on screen on equal distance"""
+        # Ensure equal space between them based on screen size
+        if self.settings.shield_count:
+            spacing = self.settings.screen_width // self.settings.shield_count
+            # Divide each segment to find its center
+            init_centerx = spacing/2
+
+            for indx in range(self.settings.shield_count):
+                shield = Shield(self)
+                # Calculate next center
+                shield.rect.centerx = init_centerx + spacing*indx
+                self.shields.add(shield)
+
+
     def _update_screen(self):
         """Update images on the screen and flip to the new screen"""
         # Recolor the bg during each pass through the loop.
@@ -399,6 +473,9 @@ class AlienInvasion:
 
         # Draw fleet
         self.aliens.draw(self.screen)
+        
+        # Draw shields
+        self.shields.draw(self.screen)
 
         # Draw the score in the corner
         self.sb.draw_score()
@@ -431,6 +508,9 @@ class AlienInvasion:
         sys.exit()
 
 
+# TODO
+# sound effects
+# sprite explosions
 
 if __name__ == '__main__':
     ai = AlienInvasion()
