@@ -2,3 +2,4 @@
 
 # Part of alien invasion. Added features
 # 1. Aliens can fire at you
+# 2. Destructable shields

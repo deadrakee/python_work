@@ -1,6 +1,7 @@
 """Module containing settings"""
 import random
 
+# Colors
 TRANSPARENT = (0, 0, 0, 0)
 
 class Settings:
@@ -17,6 +18,8 @@ class Settings:
 
         # Ship settings
         self.ship_limit = 3
+        self.ship_width = 60
+        self.ship_height = 48
 
         # Bullet settings
         self.bullet_height = 15
