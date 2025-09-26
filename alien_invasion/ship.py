@@ -4,6 +4,7 @@ import pygame.image
 from pygame.sprite import Sprite
 from direction import MoveRight, MoveLeft
 from ship_state import ShipState
+from my_timer import Timer
 
 class Ship(Sprite):
     """Create and manipulate a ship, representing a player"""
@@ -15,12 +16,9 @@ class Ship(Sprite):
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
 
-        # Load the ship's image and get its rect.
-        # self.image = pygame.image.load('images/ship.bmp') 
+        # Create a list of actions with list of all sprites
         self._load_spritesheet()
         self.rect = self.image_list[0][0].get_rect()
-
-
         # Place ship at the bottom center of the screen
         self.rect.midbottom = self.screen_rect.midbottom
 
@@ -31,26 +29,42 @@ class Ship(Sprite):
         self.r_direction = MoveRight(self.rect, self.screen_rect)
         self.l_direction = MoveLeft(self.rect, self.screen_rect)
 
+        # Animation
         # Current ship state
         self.state = ShipState.IDLE
-        # Is currently firing
+        # Current frame of active state
+        self.frame = 0
+        # Active when firing bullet
         self.firing = False
+        # Timer for next animation frame
+        self.anim_speed = self.settings.ship_anim_speed[self.state.value]
+        self.anim_timer = Timer(self.anim_speed)
+        self.anim_timer.start_timer()
+
 
     def blitme(self):
-        """Draw ship at its current location"""
-        self.screen.blit(self.image_list[1][1], self.rect)
+        """Draw ship at with curent animation and frame"""
+        self.screen.blit(self.image_list[self.state.value][self.frame], self.rect)
+
 
     def update(self):
-        """Move in all active directions"""
+        """Move left and right and update animation"""
         self.x = self.r_direction.move(self.settings.ship_speed, self.x)
         self.x = self.l_direction.move(self.settings.ship_speed, self.x)
 
-        # TODO
-        # Advance Animation
+        # Advance animation to next frame
+        if self.anim_timer.is_elapsed():
+            self.frame = (self.frame + 1) % len(self.image_list[self.state.value])
+            self.anim_timer.start_timer(duration=self.anim_speed)
+
+            # Disable firing, when animation is finished
+            if self.firing and self.frame == 0:
+                self.firing = False
+                self.set_state()
         
 
     def _load_spritesheet(self):
-        """asdas"""
+        """Create list of actions, containing all sprite images"""
         self.sheet_image = pygame.image.load('images/ship_sheet.png')
         
         # List containing lists of individual sprites
@@ -91,24 +105,31 @@ class Ship(Sprite):
         return new_image
     
 
-    def center_ship(self):
-        """Place the ship in the original position"""
+    def reset_ship(self):
+        """Center, put to IDLE and reset animation timer, flags and frame"""
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
+        self.state = ShipState.IDLE
+        self.frame = 0
+        self.anim_speed = self.settings.ship_anim_speed[self.state.value]
+        self.anim_timer.start_timer(duration=self.anim_speed)
+        self.firing = False
 
-#TODO
-# set state on left/right key press/release
-# set on fire, set when fire finishes and release firing flag
-# what happens when we move while firing? Fire flag is stuck ?
 
     def set_state(self):
-        """asda"""
+        """Change ship to start new animation"""
+        # This is used when:
+        # Left/right key press/release;
+        # Space is pressed in order on fire;
+        # On active fire when animation finished (Fire animation is fast and completes almost instantly)
         new_state = self._assess_state()
 
         if new_state != self.state:
-            # TODO
-            # Reset animation
-            pass
+            # New state is set. Reset frame, animation speed and timer
+            self.state = new_state
+            self.frame = 0
+            self.anim_speed = self.settings.ship_anim_speed[self.state.value]
+            self.anim_timer.start_timer(duration=self.anim_speed)
 
 
     def _assess_state(self):

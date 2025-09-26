@@ -110,8 +110,10 @@ class AlienInvasion:
         """Process the keydowns"""
         if event.key == pygame.K_RIGHT:
             self.ship.r_direction.start_moving()
+            self.ship.set_state()
         elif event.key == pygame.K_LEFT:
             self.ship.l_direction.start_moving()
+            self.ship.set_state()
         elif event.key == pygame.K_ESCAPE:
             self._quit_game()
         elif event.key == pygame.K_SPACE:
@@ -132,8 +134,10 @@ class AlienInvasion:
         """Process key releases"""
         if event.key == pygame.K_RIGHT:
             self.ship.r_direction.stop_moving()
+            self.ship.set_state()
         elif event.key == pygame.K_LEFT:
             self.ship.l_direction.stop_moving()
+            self.ship.set_state()
 
 
     def _start_game(self):
@@ -154,7 +158,7 @@ class AlienInvasion:
         # Create new fleet, shields and center ship
         self._create_shields()
         self._create_fleet()
-        self.ship.center_ship()
+        self.ship.reset_ship()
 
         # Hide cursor
         pygame.mouse.set_visible(False)
@@ -165,6 +169,10 @@ class AlienInvasion:
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = ShipBullet(self, self.ship.rect)
             self.bullets.add(new_bullet)
+
+            # Change to firing animation
+            self.ship.firing = True
+            self.ship.set_state()
 
 
     def _fire_enemy_bullet(self, alien_rect):
@@ -336,7 +344,7 @@ class AlienInvasion:
         """Respond when alien collides with the ship"""
         if self.stats.ships_remaining > 1:
             # Move ship to default position
-            self.ship.center_ship()
+            self.ship.reset_ship()
 
             # Clear the screen
             self.aliens.empty()

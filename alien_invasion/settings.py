@@ -21,10 +21,18 @@ class Settings:
         self.ship_width = 60
         self.ship_height = 48
 
+        # Ship animation speed
+        self.ship_anim_speed = [ 1000, # Idle
+                                 50,   # Idle+f
+                                 1000, # MoveL
+                                 1000, # MoveR
+                                 50,   # MoveL+f
+                                 50 ]  # MoveR+f
+
         # Bullet settings
         self.bullet_height = 15
         self.bullet_color = (255, 0, 0)
-        self.bullets_allowed = 3
+        self.bullets_allowed = 30
         self.bullet_invincible = False
 
         # Enemy bullets
@@ -57,7 +65,7 @@ class Settings:
     def init_dynamic_settings(self):
         """Settings which will reset at runtime"""
         self.alien_speed = 1.0 
-        self.ship_speed = 3
+        self.ship_speed = 5
         self.bullet_speed = 4
         self.bullet_width = 3
         self.alien_points = 50

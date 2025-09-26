@@ -1,10 +1,11 @@
-from enum import Enum
+from enum import Enum, unique
 
-class ShipState(str, Enum):
+@unique
+class ShipState(Enum):
     """Enumeration for all possible ship states"""
-    IDLE = "idle"
-    IDLE_FIRE = "idle_fire"
-    MOVE_LEFT = "move_left"
-    MOVE_RIGHT = "move_right"
-    MOVE_LEFT_FIRE = "move_left_fire"
-    MOVE_RIGHT_FIRE = "move_right_fire"
+    IDLE = 0
+    IDLE_FIRE = 1
+    MOVE_LEFT = 2
+    MOVE_RIGHT = 3
+    MOVE_LEFT_FIRE = 4
+    MOVE_RIGHT_FIRE = 5

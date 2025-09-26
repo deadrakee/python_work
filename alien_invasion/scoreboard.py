@@ -100,7 +100,6 @@ class Scoreboard:
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_image_rect)
         self.screen.blit(self.level_image, self.level_rect)
-        # TODO
-        # draw original ship image
-        # self.ships.draw(self.screen)
+        for ship in self.ships.sprites():
+            ship.blitme()
         
