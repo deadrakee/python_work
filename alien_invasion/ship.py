@@ -43,7 +43,7 @@ class Ship(Sprite):
 
 
     def blitme(self):
-        """Draw ship at with curent animation and frame"""
+        """Draw ship at curent animation and frame"""
         self.screen.blit(self.image_list[self.state.value][self.frame], self.rect)
 
 
@@ -52,7 +52,14 @@ class Ship(Sprite):
         self.x = self.r_direction.move(self.settings.ship_speed, self.x)
         self.x = self.l_direction.move(self.settings.ship_speed, self.x)
 
-        # Advance animation to next frame
+        #Advance animation to next frame
+        self._next_frame()
+
+
+    def _next_frame(self):
+        """Advance animation to next frame"""
+
+        # Play next frame when delay elapsed
         if self.anim_timer.is_elapsed():
             self.frame = (self.frame + 1) % len(self.image_list[self.state.value])
             self.anim_timer.start_timer(duration=self.anim_speed)

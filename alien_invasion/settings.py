@@ -16,6 +16,14 @@ class Settings:
         self.fullscreen = False
         self.button_count = 0
 
+        # colors
+        self.BLACK = (0,0,0)
+        self.GRAY = (50,50,50)
+        self.RED = (255,0,0)
+        self.GREEN = (0,255,0)
+        self.BLUE = (0,0,255)
+        self.WHITE = (255,255,255)
+
         # Ship settings
         self.ship_limit = 3
         self.ship_width = 60
@@ -43,6 +51,7 @@ class Settings:
 
         # Alien settings
         self.fleet_drop_speed = 10
+        self.alien_anim_speed = 200
 
         # Shield size
         self.shield_shape = "image"
