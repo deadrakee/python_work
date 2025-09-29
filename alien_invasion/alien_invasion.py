@@ -277,20 +277,12 @@ class AlienInvasion:
             self.bullets, self.aliens, not self.settings.bullet_invincible, False)
         
         if collisions:
-
-
-            #TODO Alien explosions working sporadically
-            for bullet, hit_aliens in collisions.items():
-                for alien in hit_aliens:
-                    if not alien.dying:      # prevent double-trigger
-                        alien.dying = True
-                        alien.state = 1
-                        alien.frame = 4
-
             for alien_list in collisions.values():
                 # Increase score for killed aliens
                 self.stats.score += self.settings.alien_points * len(alien_list)
                 for alien in alien_list:
+                    # Start dying animation
+                    alien.mark_dying()
                     # Enable shooting ofthe alien behind the killed one
                     self._re_arm_alien(alien)
             # Update the score and highscore image
@@ -529,7 +521,6 @@ class AlienInvasion:
 
 # TODO
 # sound effects
-# sprite explosions
 
 if __name__ == '__main__':
     ai = AlienInvasion()

@@ -2,10 +2,12 @@ import pygame
 import pygame.image
 import pygame.sprite
 
+from alien_state import AlienState
 from my_timer import Timer
 
 class Alien(pygame.sprite.Sprite):
     """Contains characteristics of a single alien"""
+    INITAL_FRAME : int = 0
 
     def __init__(self, ai_game):
         """Create new sprite almost in the top left corner"""
@@ -31,49 +33,64 @@ class Alien(pygame.sprite.Sprite):
         self.col = 0
 
         # Animation
-        # Current alien state
-        self.state = 0
-        # Current frame of active state
-        self.frame = 0
-        # Flag indicating kill transition
-        self.dying = False
-        # Timer for next animation frame
-        self.anim_speed = self.settings.alien_anim_speed
-        self.anim_timer = Timer(self.anim_speed)
-        self.anim_timer.start_timer()
+        self._init_animation()
+
+
+    def blitme(self):
+        """Draw alien with curent animation and frame"""
+        self.screen.blit(self.image_list[self.state.value][self.frame], self.rect)
+
+
+    def update(self):
+        """Move the alien left and right and switch animations"""
+        # Move across the screen
+        self.x += (self.settings.alien_speed * self.settings.fleet_direction)
+        self.rect.x = self.x
+
+        # Go to next frame
+        self._advance_frame()
+
+
+    def _advance_frame(self):
+        """Advance animation to next frame and delete when dying animation is over"""
+        # Play next frame when delay elapsed
+        if self.anim_timer.is_elapsed():
+            # Increment +1 or start from 0 when last frame is reached
+            self.frame = (self.frame + 1) % len(self.image_list[self.state.value])
+            self.anim_timer.start_timer(duration=self.anim_speed)
+
+            # When last animation of Dying is reached, kill obj
+            if self.state == AlienState.DYING and self.frame == Alien.INITAL_FRAME:
+                self.kill()
+
+
+    def mark_dying(self):
+        """Raise flag to delete alien after death animation finishes"""
+        if not self.dying:
+            self.dying = True
+            self.state = AlienState.DYING
+            self.frame = Alien.INITAL_FRAME
+            self.anim_timer.start_timer(duration=self.anim_speed)
 
 
     def check_edges(self):
         """Return True if an alien is at the edge of the screen"""
         screen_rect = self.screen.get_rect()
         return (self.rect.left <= 0) or (self.rect.right >= screen_rect.right)
+    
 
-
-    def update(self):
-        """Move the alien left and right"""
-        self.x += (self.settings.alien_speed * self.settings.fleet_direction)
-        self.rect.x = self.x
-
-        #Advance animation to next frame
-        self._next_frame()
-
-        # When last animation of Dying is reached, kill obj
-        if self.state == 1 and self.frame == 4:
-            self.kill()
-
-
-    def _next_frame(self):
-        """Advance animation to next frame"""
-
-        # Play next frame when delay elapsed
-        if self.anim_timer.is_elapsed():
-            self.frame = (self.frame + 1) % len(self.image_list[self.state])
-            self.anim_timer.start_timer(duration=self.anim_speed)
-            
-
-    def blitme(self):
-        """Draw alien with curent animation and frame"""
-        self.screen.blit(self.image_list[self.state][self.frame], self.rect)
+    def _init_animation(self):
+        """Set inital state, frame, flags and animation timer"""
+        # Current alien state
+        self.state = AlienState.MOVING
+        # Current frame of active state
+        self.frame = Alien.INITAL_FRAME
+        # Flag indicating kill transition
+        self.dying = False
+        # Timer for next animation frame
+        self.anim_speed = self.settings.alien_anim_speed
+        self.anim_timer = Timer(self.anim_speed)
+        self.anim_timer.start_timer()
 
 
     def _load_spritesheet(self):

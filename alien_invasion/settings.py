@@ -51,7 +51,7 @@ class Settings:
 
         # Alien settings
         self.fleet_drop_speed = 10
-        self.alien_anim_speed = 200
+        self.alien_anim_speed = 50
 
         # Shield size
         self.shield_shape = "image"
