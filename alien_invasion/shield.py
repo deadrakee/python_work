@@ -24,7 +24,7 @@ class Shield(Sprite):
         self.rect = self.image.get_rect()
         
         # place them on a fixed distance from the bottom of the screen
-        self.rect.y = self.settings.shield_bottom
+        self.rect.y = self.settings.screen_height-self.settings.shield_bottom_offset
 
         # mask
         self.mask = pygame.mask.from_surface(self.image)

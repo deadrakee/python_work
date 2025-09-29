@@ -47,7 +47,7 @@ class Settings:
         self.enemy_bullet_color = (0, 135, 0)
         self.enemy_bullet_speed = 2
         self.enemy_bullet_width = 3
-        self.eb_spawn_cd = 100
+        self.eb_spawn_cd = 80
 
         # Alien settings
         self.fleet_drop_speed = 10
@@ -58,7 +58,7 @@ class Settings:
         self.shield_count = 3
         self.shield_width = 100
         self.shield_height = 30
-        self.shield_bottom = self.screen_height-200
+        self.shield_bottom_offset = 200
         self.shield_color = (0, 100, 0, 255)
         self.dent_radius_multi = 2.8
 
