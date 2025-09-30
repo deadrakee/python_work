@@ -5,3 +5,4 @@
 # 2. Destructable shields
 # 3. Ship has move and fire animation
 # 4. Aliens explode on hit
+# 5. Sound effects - fire, death, kill and background

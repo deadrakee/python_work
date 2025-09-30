@@ -5,6 +5,7 @@ import pygame.display
 import pygame.draw
 import pygame.event
 import pygame.mask
+import pygame.mixer
 import pygame.sprite
 import pygame.time
 import pygame.mouse
@@ -20,6 +21,7 @@ from bullet import ShipBullet, AlienBullet
 from alien import Alien
 from button import Button
 from shield import Shield
+import sound_effects as se
 
 class AlienInvasion:
     """Class containing all game assets"""
@@ -163,12 +165,16 @@ class AlienInvasion:
         # Hide cursor
         pygame.mouse.set_visible(False)
 
+        # Play background music
+        se.background_sound.play(loops=-1)
+
             
     def _fire_bullet(self):
         """Create new instance of a bullet"""
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = ShipBullet(self, self.ship.rect)
             self.bullets.add(new_bullet)
+            se.bullet_sound.play()
 
             # Change to firing animation
             self.ship.firing = True
@@ -285,6 +291,8 @@ class AlienInvasion:
                     alien.mark_dying()
                     # Enable shooting ofthe alien behind the killed one
                     self._re_arm_alien(alien)
+                    # Play exposion sound
+                    se.explosion_sound.play()
             # Update the score and highscore image
             self.sb.prepare_score()
             self.sb.check_new_highscore()
@@ -368,6 +376,8 @@ class AlienInvasion:
             # No more lives. Game is stopped
             self.game_active = False
             pygame.mouse.set_visible(True)
+            se.background_sound.fadeout(self.settings.sound_bg_fade)
+            se.death_sound.play()
 
         # Remove life and update indicator on status bar
         self.stats.ships_remaining -= 1
@@ -518,9 +528,6 @@ class AlienInvasion:
         hs_path.write_text(str(self.stats.high_score))
         sys.exit()
 
-
-# TODO
-# sound effects
 
 if __name__ == '__main__':
     ai = AlienInvasion()

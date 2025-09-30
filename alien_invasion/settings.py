@@ -68,6 +68,8 @@ class Settings:
         # Kill points ramping scale
         self.score_scale = 1.5
 
+        self.sound_bg_fade = 1000 #ms
+
         self.init_dynamic_settings()
 
 
